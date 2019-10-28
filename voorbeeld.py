@@ -70,7 +70,7 @@ handlers = [CommandHandler('start', start),
             CommandHandler('scrape', scrape, pass_args=True),
             CommandHandler('wtf', wtf)]
 
-for i in range(0, len(handlers)):
+for i in range(len(handlers)):
     dispatcher.add_handler(handlers[i])
 
 updater.start_polling()
