@@ -1,0 +1,9 @@
+#!/bin/bash
+
+service mysql start
+mysql -u root < /root/mysql.sql
+
+while true;
+do 
+	sleep 10s
+done
