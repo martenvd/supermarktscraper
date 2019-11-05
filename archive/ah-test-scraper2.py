@@ -35,7 +35,7 @@ class Product_scraper:
                     gewicht = element['weight']
                     imagelink = element['image']
                     self.cursor.execute(
-                        "INSERT INTO albert_heijn (productnaam, prijs, product_url, gewicht, imagelink) VALUES (%s, %s, %s, %s, %s)",
+                        "INSERT INTO albert_heijn (productnaam, prijs, product_url, hoeveelheid, imagelink) VALUES (%s, %s, %s, %s, %s)",
                         (productnaam, prijs, product_url, gewicht, imagelink))
                     self.mariadb_connection.commit()
                     print(element['name'], element['offers']['price'])

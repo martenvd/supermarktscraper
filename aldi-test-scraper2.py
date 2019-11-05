@@ -8,6 +8,7 @@ import time
 # TODO: ook het gewicht ophalen uit de html (deze staat niet in de dictionary).
 # TODO: delay inbouwen na elke request om succes te garanderen.
 
+
 class product_scraper:
     def __init__(self, name, url):
         self.url = url
