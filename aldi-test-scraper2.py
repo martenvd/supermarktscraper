@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import mysql.connector as mariadb
+import time
 
 # TODO: producten naar database schrijven.
 # TODO: ook het gewicht ophalen uit de html (deze staat niet in de dictionary).
@@ -32,6 +33,8 @@ class product_scraper:
     def get_aldi_product(self):
         for categorie in self.categories:
             categorie_url = categorie
+            #Delay om human te lijken.
+            time.sleep(0.5)
             r = requests.get(categorie_url)
             soup = BeautifulSoup(r.text, "lxml")
             element = soup.find_all("script", type="application/ld+json")[-1].text
