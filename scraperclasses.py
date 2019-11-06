@@ -19,11 +19,11 @@ class Main_Scraper:
     def __repr__(self):
         return "Scraper class voor : " + self.name
 
-    def soep(self, url, soepOfNiet):
+    def soup(self, url, soupOrNot):
         r = requests.get(url, headers=self.headers)
         soup = BeautifulSoup(r.text, 'lxml')
         soup.encode('UTF-8')
-        if soepOfNiet:
+        if soupOrNot:
             return soup
         else:
             return r
@@ -49,8 +49,8 @@ class Jumbo_Product_Scraper(Main_Scraper):
         while not all_pages_reached:
             # Delay om meer human te lijken.
             time.sleep(1)
-            r = self.soep(self.url + self.product_suffix + str(page_index), False)
-            soup = self.soep(self.url + self.product_suffix + str(page_index), True)
+            r = self.soup(self.url + self.product_suffix + str(page_index), False)
+            soup = self.soup(self.url + self.product_suffix + str(page_index), True)
             #r = requests.get(self.url + self.product_suffix + str(page_index), headers=self.headers)
             #soup = BeautifulSoup(r.text, "lxml")
             if len(r.text) > 2200:
@@ -97,7 +97,7 @@ class AH_Product_Scraper(Main_Scraper):
         self.producten_url_list = []
 
     def scraper(self):
-        for a in self.soep(self.url + self.suffix, True).find_all('a', href=True):
+        for a in self.soup(self.url + self.suffix, True).find_all('a', href=True):
             if "/producten/" in a['href'] and "/merk" not in a['href'] and "/eerder-gekocht" not in a['href']:
                 self.categorie_url_list.append(self.url + a['href'])
                 print(self.url + a['href'])
@@ -105,7 +105,7 @@ class AH_Product_Scraper(Main_Scraper):
         self.categorie_url_list = list(set(self.categorie_url_list))
 
         for link in self.categorie_url_list:
-            for a in self.soep(link + '?page=2000', True).find_all('a', href=True):
+            for a in self.soup(link + '?page=2000', True).find_all('a', href=True):
                 if "/producten/product" in a['href']:
                     self.producten_url_list.append(self.url + a['href'])
                     print(self.url + a['href'])
@@ -114,7 +114,7 @@ class AH_Product_Scraper(Main_Scraper):
 
         try:
             for link in self.producten_url_list:
-                element = self.soep(link, True).find("script", type="application/ld+json").text
+                element = self.soup(link, True).find("script", type="application/ld+json").text
                 element = json.loads(element)
                 if 'offers' in element:
                     productnaam = element['name']
@@ -142,7 +142,7 @@ class Aldi_Product_Scraper(Main_Scraper):
 
     def get_aldi_categories(self):
         temp_list = []
-        for a in self.soep(self.url, True).find_all('a', href=True):
+        for a in self.soup(self.url, True).find_all('a', href=True):
             if "/onze-producten/" in a['href']:
                 temp_list.append(self.url + a['href'])
         temp_list = list(set(temp_list))
@@ -153,7 +153,7 @@ class Aldi_Product_Scraper(Main_Scraper):
             categorie_url = categorie
             #Delay om human te lijken.
             time.sleep(0.5)
-            element = self.soep(categorie_url, True).find_all("script", type="application/ld+json")[-1].text
+            element = self.soup(categorie_url, True).find_all("script", type="application/ld+json")[-1].text
             element = json.loads(element)
             try:
                 num_items = element['numberOfItems']
@@ -191,7 +191,7 @@ class Coop_Product_Scraper(Main_Scraper):
 
     def fetch_categories(self):
         categories = []
-        for link in self.soep(self.url + self.suffix, True).find_all('a', href=True):
+        for link in self.soup(self.url + self.suffix, True).find_all('a', href=True):
             if '/boodschappen/' in link['href']:
                 categories.append(link['href'])
         categories = list(set(categories))
@@ -199,7 +199,7 @@ class Coop_Product_Scraper(Main_Scraper):
 
 
     def fetch_products(self, category_url):
-        page = self.soep(category_url + "?PageSize=99999", True)  # haal pagina met producten in categorie op
+        page = self.soup(category_url + "?PageSize=99999", True)  # haal pagina met producten in categorie op
         for article in page.find_all('article'):  # loop over alle producten heen
             try:
                 img = article.find('img')['data-srcset'].split()[0]  # afbeelding van product
@@ -209,7 +209,7 @@ class Coop_Product_Scraper(Main_Scraper):
                 hoeveelheid = data['variant']
                 prijs = float(data['price'])
                 product = {
-                    'id': data['id'], #heeft ah dit ook?
+                    'id': data['id'], # heeft ah dit ook?
                     'naam': name,
                     'prijs': float(data['price']),
                     'product_url': product_url,
@@ -229,18 +229,18 @@ class Coop_Product_Scraper(Main_Scraper):
 
 
     def fetch_all(self):
-        categories = self.fetch_categories() #haal cat pagina op en parse alle categorieen
+        categories = self.fetch_categories() # haal cat pagina op en parse alle categorieen
         for cat in categories:
-            self.fetch_products(cat) #haal alle producten van cateegorieen op
+            self.fetch_products(cat) # haal alle producten van cateegorieen op
 
 
 
 #jumbo = Jumbo_Product_Scraper("Jumbo", "https://www.jumbo.com/")
 #albert_heijn = AH_Product_Scraper("Albert Heijn", "https://www.ah.nl")
 #aldi = Aldi_Product_Scraper("Aldi", "https://www.aldi.nl/")
-coop = Coop_Product_Scraper("COOP", "https://www.coop.nl")
+#coop = Coop_Product_Scraper("COOP", "https://www.coop.nl")
 
 #jumbo.get_jumbo_products()
 #albert_heijn.scraper()
 #aldi.get_aldi_product()
-print(coop.products)
+#print(coop.products)
