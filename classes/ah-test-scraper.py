@@ -24,9 +24,10 @@ class AH_scraper:
         return soup
 
     def scraper(self):
-        for a in self.soep(self.url).find_all('a', href=True):
+        for a in self.soep(self.url + 'producten').find_all('a', href=True):
             if "/producten/" in a['href'] and "/merk" not in a['href'] and "/eerder-gekocht" not in a['href']:
                 self.categorie_url_list.append(self.url + a['href'])
+                print(self.url + a['href'])
 
         self.categorie_url_list = list(set(self.categorie_url_list))
 
@@ -34,11 +35,14 @@ class AH_scraper:
             for a in self.soep(link + '?page=2000').find_all('a', href=True):
                 if "/producten/product" in a['href']:
                     self.producten_url_list.append(self.url + a['href'])
+                    print(self.url + a['href'])
 
         self.producten_url_list = list(set(self.producten_url_list))
 
         for link in self.producten_url_list:
-            element = self.soep(link).find("script", type="application/ld+json").text
+            r = requests.get(link)
+            soup = BeautifulSoup(r.text, "lxml")
+            element = soup.find("script", type="application/ld+json").text
             element = json.loads(element)
             if 'offers' in element:
                 productnaam = element['name']
@@ -47,12 +51,12 @@ class AH_scraper:
                 gewicht = element['weight']
                 imagelink = element['image']
                 self.cursor.execute(
-                    "INSERT INTO albert_heijn (productnaam, prijs, product_url, gewicht, imagelink) VALUES (%s, %s, %s, %s, %s)",
+                    "INSERT INTO albert_heijn (productnaam, prijs, product_url, hoeveelheid, imagelink) VALUES (%s, %s, %s, %s, %s)",
                     (productnaam, prijs, product_url, gewicht, imagelink))
                 self.mariadb_connection.commit()
                 print(element['name'], element['offers']['price'])
 
 
-ah_scraper = AH_scraper("Albert Heijn", "https://www.ah.nl/producten")
+ah_scraper = AH_scraper("Albert Heijn", "https://www.ah.nl/")
 
 ah_scraper.scraper()
