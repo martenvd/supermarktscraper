@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block header %}
+<div class="inner">
+  <h3 class="masthead-brand">Boodschappen vergelijken</h3>
+  <nav class="nav nav-masthead justify-content-center">
+    <a class="nav-link active" href='{{ url_for("home") }}'>Home</a>
+    <a class="nav-link" href='{{ url_for("minor") }}'>S4D Minor</a>
+    <a class="nav-link" href='{{ url_for("poster") }}'>Poster</a>
+  </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+  <h1 class="cover-heading">Boodschappen</h1>
+  <p class="lead">Vul de producten in en kijk bij welke supermarkt je het goedkoopst uit bent.</p>
+  <form name="boodschappenlijst" method="post" action="{{ url_for('home') }}">
+    <div class="form-group">
+      <label for="boodschappenlijst">Boodschappenlijst</label>
+      <textarea class="form-control" name="boodschappenlijst" id="boodschappenlijst" rows="7"></textarea>
+      <p class="lead">
+        <br>
+        <input type="Submit" class="btn btn-lg btn-secondary" value="Zoeken"></input>
+      </p>
+    </div>
+  </form>
+
+{% endblock %}

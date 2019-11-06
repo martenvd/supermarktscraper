@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>S4D Minor</title>
+    <link rel="stylesheet" media="screen" href='{{ url_for("static", filename="bootstrap.min.css") }}'>
+    <link href='{{ url_for("static", filename="cover.css") }}'rel="stylesheet">
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="text-center">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <header class="masthead mb-auto">
+      {% block header %}{% endblock %}
+  </header>
+        <main role="main" class="text-center">
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="mastfoot mt-auto">
+            <div class="inner">
+                <p>Footer</a></p>
+            </div>
+        </footer>
+    </div>
+  </body>
+</html>
+<script type="text/javascript" src='{{ url_for("static", filename="bootstrap.min.js") }}'></script>
