@@ -1,6 +1,4 @@
 from flask import Flask, Response, render_template, request, url_for, jsonify
-import json
-from wtforms import StringField, Form
 import mysql.connector as mariadb
 
 app = Flask(__name__)
@@ -12,9 +10,9 @@ cursor = mariadb_connection.cursor()
 @app.route("/", methods=['GET', 'POST'])
 def home():
     if request.form:
-        #post_data = request.form['boodschappenlijst']
-        boodschappen_lijst = []
-        print(request.form)
+        boodschappenlijst = request.form.getlist('boodschappenlijst')
+        for i in boodschappenlijst:
+            print(i)
     return render_template("index.html")
 
 
@@ -26,13 +24,16 @@ def autocomplete():
     results = [mv[0] for mv in cursor.fetchall()]
     return jsonify(matching_results=results)
 
+
 @app.route("/minor")
 def minor():
     return render_template("minor.html")
 
+
 @app.route("/poster")
 def poster():
     return render_template("poster.html")
+
 
 if __name__ == "__main__":
     app.run()

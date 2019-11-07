@@ -17,7 +17,7 @@
 <form name="boodschappenlijst" id="boodschappenlijst" method="post" action="{{ url_for('home') }}">
     <div class="form-group" id="productenlijsten">
         <label for="boodschappenlijst1">Boodschappenlijst</label>
-            <input name="boodschappenlijst1" type="text" id="boodschappenlijst1" class="form-control input-lg"/><br>
+            <input name="boodschappenlijst" type="text" id="boodschappenlijst1" class="form-control input-lg"/><br>
     </div>
     <div class="form-group">
         <input type="button" class="btn btn-lg btn-secondary" id="newField" onclick="addInputField()" value="Nieuw product">
@@ -29,7 +29,7 @@
 <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
 <script src="//code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script>
-  var numberOfForms = 2;
+  var numberOfForms = 1;
 
   function autocomplete() {
   $(function() {
@@ -54,7 +54,7 @@
   autocomplete();
 
   $('#newField').click(function() {
-    $('<input name="boodschappenlijst' + numberOfForms + '" type="text" id="boodschappenlijst' + numberOfForms + '" class="form-control input-lg"/><br>').appendTo($('#productenlijsten'));
+    $('<input name="boodschappenlijst" type="text" id="boodschappenlijst' + numberOfForms + '" class="form-control input-lg"/><br>').appendTo($('#productenlijsten'));
     autocomplete();
   });
 
