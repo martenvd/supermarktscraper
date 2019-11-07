@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, request, url_for
+from flask import Flask, Response, render_template, request, url_for, jsonify
 import json
 from wtforms import StringField, Form
 import mysql.connector as mariadb
@@ -8,33 +8,23 @@ app = Flask(__name__)
 mariadb_connection = mariadb.connect(host="10.2.0.181", user="s4dpython", password="s4dpython", database="producten")
 cursor = mariadb_connection.cursor()
 
-query = "SELECT productnaam FROM coop"
-cursor.execute(query)
-result = cursor.fetchall()
-final_result = []
-for i in result:
-    final_result.append(str(i))
-
-
-class SearchForm(Form):
-    autocomp = StringField('Insert City', id='city_autocomplete')
-
-@app.route('/_autocomplete', methods=['GET'])
-def autocomplete():
-    return Response(json.dumps(final_result), mimetype='application/json')
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    form = SearchForm(request.form)
     if request.form:
-        post_data = request.form['boodschappenlijst']
+        #post_data = request.form['boodschappenlijst']
         boodschappen_lijst = []
-        for element in post_data.split("\n"):
-            element.replace(" ", "")
-            element = element.rstrip()
-            boodschappen_lijst.append(element)
-        print(boodschappen_lijst)
-    return render_template("index.html", form=form)
+        print(request.form)
+    return render_template("index.html")
+
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    search = request.args.get('q')
+    query = "SELECT productnaam FROM coop WHERE productnaam LIKE '%" + str(search) + "%' LIMIT 10"
+    cursor.execute(query)
+    results = [mv[0] for mv in cursor.fetchall()]
+    return jsonify(matching_results=results)
 
 @app.route("/minor")
 def minor():
