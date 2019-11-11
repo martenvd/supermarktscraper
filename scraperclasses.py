@@ -15,7 +15,7 @@ class Settings:
     database_user = "s4dpython"
     database_password = "s4dpython"
     database_db = "producten"
-    database_port = 3307
+    database_port = 3306
     database_host = "213.190.22.172"
 
 ### Product Class ###
@@ -94,7 +94,8 @@ class Jumbo_scraper(Scraper):
 
         while not all_pages_reached:
             # Delay om meer human te lijken.
-            time.sleep(0.2)
+            print("[*] Jumbo / Scraping page {}/2105".format(page_index))
+            time.sleep(1)
             response = self.response(self.url + self.url_suffix + str(page_index))
             soup = self.soup(self.url + self.url_suffix + str(page_index))
             if len(response.text) > 2200:
@@ -122,6 +123,7 @@ class Jumbo_scraper(Scraper):
                         all_products_reached = True
             else:
                 all_pages_reached = True
+                print("[*] Jumbo / Scraping stopped after {} pages".format(page_index))
             product_index = 0
             page_index += 1
             all_products_reached = False
@@ -136,21 +138,22 @@ class AH_scraper(Scraper):
         self.producten_url_list = []
 
     def fetch_all_products(self):
+        print("[*] AH / Indexing all categories")
         for a in self.soup(self.url + self.url_suffix).find_all('a', href=True):
             if "/producten/" in a['href'] and "/merk" not in a['href'] and "/eerder-gekocht" not in a['href']:
                 self.categorie_url_list.append(self.url + a['href'])
-                #print(self.url + a['href'])
-
         self.categorie_url_list = list(set(self.categorie_url_list))
 
+        print("[*] AH / Indexing all product urls")
         for link in self.categorie_url_list:
             for a in self.soup(link + '?page=2000').find_all('a', href=True):
                 if "/producten/product" in a['href']:
                     self.producten_url_list.append(self.url + a['href'])
-                    #print(self.url + a['href'])
         self.producten_url_list = list(set(self.producten_url_list))
+        print("[*] AH / Number of products found: {}".format(len(self.producten_url_list)))
 
         try:
+            print("[*] AH / Fetching all product information")
             for link in self.producten_url_list:
                 element = self.soup(link).find("script", type="application/ld+json").text
                 element = json.loads(element)
@@ -165,6 +168,7 @@ class AH_scraper(Scraper):
                     self.products.append(product)
                     self.database.write_product(product)
         except:
+            print("[*] AH / Stopped fetching all product information")
             pass
 
 ### ALDI ###
@@ -185,7 +189,8 @@ class Aldi_scraper(Scraper):
     def fetch_all_products(self):
         for link in self.categories_url:
             # Delay om human te lijken.
-            time.sleep(0.2)
+            time.sleep(5)
+            print("[*] Aldi / Scraping categorie {}".format(link))
             element = self.soup(link).find_all("script", type="application/ld+json")[-1].text
             element = json.loads(element)
             try:
@@ -222,6 +227,7 @@ class Coop_scraper(Scraper):
         for link in self.categories_url:
             # Delay om human te lijken.
             time.sleep(0.2)
+            print("[*] Coop / Scraping categorie {}".format(link))
             page = self.soup(link + "?PageSize=99999")
             for article in page.find_all('article'):
                 try:
