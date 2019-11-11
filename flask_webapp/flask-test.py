@@ -3,7 +3,7 @@ import mysql.connector as mariadb
 
 app = Flask(__name__)
 
-mariadb_connection = mariadb.connect(host="213.190.22.172", port=3307, user="s4dpython", password="s4dpython", database="producten")
+mariadb_connection = mariadb.connect(host="213.190.22.172", user="s4dpython", password="s4dpython", database="producten")
 cursor = mariadb_connection.cursor()
 
 
@@ -11,8 +11,30 @@ cursor = mariadb_connection.cursor()
 def home():
     if request.form:
         boodschappenlijst = request.form.getlist('boodschappenlijst')
-        for i in boodschappenlijst:
-            print(i)
+
+
+        pricelist = {'coop': [], 'jumbo': [], 'aldi': [], 'albert_heijn': []}
+
+        for item in boodschappenlijst:
+            print(item)
+            for key in pricelist.keys():
+                query = "SELECT prijs FROM {table} WHERE productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
+                cursor.execute(query.format(table=key), ("%" + item + "%",))
+                for prices in cursor.fetchall():
+                    pricelist['coop'].append(prices[0])
+
+        print(pricelist)
+
+        total_prices = {'coop': 0, 'jumbo': 0, 'aldi': 0, 'albert_heijn': 0}
+
+        for key in pricelist.keys():
+            for price in pricelist[key]:
+                total_prices[key] += float(price)
+
+            total_prices[key] = "{:.2f}".format(total_prices[key])
+
+        print(total_prices)
+
     return render_template("index.html")
 
 
