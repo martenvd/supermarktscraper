@@ -12,17 +12,59 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="cover-heading">Boodschappen</h1>
-  <p class="lead">Vul de producten in en kijk bij welke supermarkt je het goedkoopst uit bent.</p>
-  <form name="boodschappenlijst" method="post" action="{{ url_for('home') }}">
-    <div class="form-group">
-      <label for="boodschappenlijst">Boodschappenlijst</label>
-      <textarea class="form-control" name="boodschappenlijst" id="boodschappenlijst" rows="7"></textarea>
-      <p class="lead">
-        <br>
-        <input type="Submit" class="btn btn-lg btn-secondary" value="Zoeken"></input>
-      </p>
-    </div>
-  </form>
+<h1 class="cover-heading">Boodschappen</h1>
+<p class="lead">Vul de producten in en kijk bij welke supermarkt je het goedkoopst uit bent.</p>
+<form name="boodschappenlijst" id="boodschappenlijst" method="post" action="{{ url_for('home') }}">
+  <div class="form-group" id="productenlijsten">
+    <label for="boodschappenlijst1">Boodschappenlijst</label>
+    <input name="boodschappenlijst" type="text" id="boodschappenlijst1" class="form-control input-lg"/><br>
+  </div>
+  <div class="form-group">
+    <input type="button" class="btn btn-lg btn-secondary" id="newField" onclick="addInputField()" value="Nieuw product">
+  </div>
+  <input type="Submit" class="btn btn-lg btn-secondary" value="Zoeken"><br>
+</form>
+
+<link href="//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet">
+<script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="//code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script>
+  var numberOfForms = 1;
+
+  function autocomplete() {
+    $(function() {
+      for (var i = 1; i <= numberOfForms; i++) {
+        $("#boodschappenlijst" + i).autocomplete({
+          source:function(request, response) {
+            $.getJSON("{{url_for('autocomplete')}}",{
+              q: request.term, // in flask, "q" will be the argument to look for using request.args
+            }, function(data) {
+              response(data.matching_results); // matching_results from jsonify
+            });
+          },
+          minLength: 2,
+          select: function(event, ui) {
+            console.log(ui.item.value); // not in your question, but might help later
+          }
+        });
+      }
+    })
+  }
+
+  autocomplete();
+
+  $('#newField').click(function() {
+    $('<input name="boodschappenlijst" type="text" id="boodschappenlijst' + numberOfForms + '" class="form-control input-lg"/><br>').appendTo($('#productenlijsten'));
+    autocomplete();
+  });
+
+  function addInputField() {
+    //document.getElementById('productenlijsten').innerHTML += '<input name="boodschappenlijst' + numberOfForms + '" type="text" id="boodschappenlijst' + numberOfForms + '" class="form-control input-lg"/><br>'
+    autocomplete();
+    numberOfForms++;
+    console.log(numberOfForms);
+  }
+</script>
+
 
 {% endblock %}

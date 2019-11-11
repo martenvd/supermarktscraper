@@ -1,28 +1,39 @@
-from flask import Flask, render_template, url_for, request
-from flask_bootstrap import Bootstrap
+from flask import Flask, Response, render_template, request, url_for, jsonify
+import mysql.connector as mariadb
 
 app = Flask(__name__)
-Bootstrap(app)
+
+mariadb_connection = mariadb.connect(host="213.190.22.172", port=3307, user="s4dpython", password="s4dpython", database="producten")
+cursor = mariadb_connection.cursor()
+
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
     if request.form:
-        post_data = request.form['boodschappenlijst']
-        boodschappen_lijst = []
-        for element in post_data.split("\n"):
-            element.replace(" ", "")
-            element = element.rstrip()
-            boodschappen_lijst.append(element)
-        print(boodschappen_lijst)
+        boodschappenlijst = request.form.getlist('boodschappenlijst')
+        for i in boodschappenlijst:
+            print(i)
     return render_template("index.html")
+
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    search = request.args.get('q')
+    query = "SELECT productnaam FROM coop WHERE productnaam LIKE '%" + str(search) + "%' LIMIT 10"
+    cursor.execute(query)
+    results = [mv[0] for mv in cursor.fetchall()]
+    return jsonify(matching_results=results)
+
 
 @app.route("/minor")
 def minor():
     return render_template("minor.html")
 
+
 @app.route("/poster")
 def poster():
     return render_template("poster.html")
+
 
 if __name__ == "__main__":
     app.run()
