@@ -40,11 +40,18 @@ def home():
 
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
-    search = request.args.get('q')
-    query = "SELECT productnaam FROM coop WHERE productnaam LIKE '%" + str(search) + "%' LIMIT 10"
-    cursor.execute(query)
-    results = [mv[0] for mv in cursor.fetchall()]
-    return jsonify(matching_results=results)
+    search = request.args.get('q').lower()
+    query = "SELECT productnaam FROM coop WHERE productnaam LIKE %s LIMIT 10"
+    cursor.execute(query, ("%" + str(search) + "%",))
+    results = [mv[0].lower() for mv in cursor.fetchall()]
+    splitter = []
+    for item in results:
+        split_item = item.split()
+        for string in split_item:
+            if search in string:
+                splitter.append(string)
+    top5_search_results = list(set(splitter[:5]))
+    return jsonify(matching_results=top5_search_results)
 
 
 @app.route("/minor")
