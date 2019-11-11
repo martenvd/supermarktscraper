@@ -3,7 +3,7 @@ import mysql.connector as mariadb
 
 app = Flask(__name__)
 
-mariadb_connection = mariadb.connect(host="213.190.22.172", user="s4dpython", password="s4dpython", database="producten")
+mariadb_connection = mariadb.connect(host="213.190.22.172", port=3307, user="s4dpython", password="s4dpython", database="producten")
 cursor = mariadb_connection.cursor()
 
 
