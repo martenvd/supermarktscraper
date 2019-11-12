@@ -15,7 +15,7 @@ class Settings:
     database_user = "s4dpython"
     database_password = "s4dpython"
     database_db = "producten"
-    database_port = 3306
+    database_port = 3307
     database_host = "213.190.22.172"
 
 ### Product Class ###
@@ -155,18 +155,25 @@ class AH_scraper(Scraper):
         try:
             print("[*] AH / Fetching all product information")
             for link in self.producten_url_list:
-                element = self.soup(link).find("script", type="application/ld+json").text
-                element = json.loads(element)
-                if 'offers' in element:
-                    productnaam = element['name']
-                    prijs = element['offers']['price']
-                    product_url = element['url']
-                    hoeveelheid = element['weight']
-                    imagelink = element['image']
+                time.sleep(0.2)
+                print("[*] AH / Fetching {}".format(link))
+                try:
+                    element = self.soup(link).find("script", type="application/ld+json").text
+                    element = json.loads(element)
+                    if 'offers' in element:
+                        productnaam = element['name']
+                        prijs = element['offers']['price']
+                        product_url = element['url']
+                        hoeveelheid = element['weight']
+                        imagelink = element['image']
 
-                    product = Product(self.table_name, productnaam, prijs, hoeveelheid, product_url, imagelink)
-                    self.products.append(product)
-                    self.database.write_product(product)
+                        product = Product(self.table_name, productnaam, prijs, hoeveelheid, product_url, imagelink)
+                        self.products.append(product)
+                        self.database.write_product(product)
+                    else:
+                        print("[-] AH / No Offer in element")
+                except:
+                    print("[-] AH / Product {} Failed".format(link))
         except:
             print("[*] AH / Stopped fetching all product information")
             pass
