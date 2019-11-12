@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, request, url_for, jsonify
+from flask import Flask, render_template, request, jsonify
 import mysql.connector as mariadb
 
 app = Flask(__name__)
@@ -12,16 +12,30 @@ def home():
     if request.form:
         boodschappenlijst = request.form.getlist('boodschappenlijst')
 
-
         pricelist = {'coop': [], 'jumbo': [], 'aldi': [], 'albert_heijn': []}
 
         for item in boodschappenlijst:
-            print(item)
+            split_item = item.split()
+            print(split_item)
             for key in pricelist.keys():
-                query = "SELECT prijs FROM {table} WHERE productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
-                cursor.execute(query.format(table=key), ("%" + item + "%",))
-                for prices in cursor.fetchall():
-                    pricelist['coop'].append(prices[0])
+                new_cursor = mariadb_connection.cursor()
+                if len(split_item) == 1:
+                    query = "SELECT prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
+                    ORDER BY prijs ASC LIMIT 1"
+                    new_cursor.execute(query.format(table=key), ("%" + split_item[0] + "%",))
+                elif len(split_item) == 2:
+                    query = "SELECT prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
+                    AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
+                    new_cursor.execute(query.format(table=key),
+                                       ("%" + split_item[0] + "%", "%" + split_item[1] + "%", ))
+                else:
+                    query = "SELECT prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
+                    productnaam LIKE %s AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
+                    new_cursor.execute(query.format(table=key),
+                                       ("%" + split_item[0] + "%", "%" + split_item[1] + "%", "%" + split_item[2] + "%"))
+                for prices in new_cursor.fetchall():
+                    pricelist[key].append(prices[0])
+                new_cursor.close()
 
         print(pricelist)
 
@@ -34,23 +48,38 @@ def home():
             total_prices[key] = "{:.2f}".format(total_prices[key])
 
         print(total_prices)
-
     return render_template("index.html")
 
 
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     search = request.args.get('q').lower()
-    query = "SELECT productnaam FROM coop WHERE productnaam LIKE %s LIMIT 10"
-    cursor.execute(query, ("%" + str(search) + "%",))
+    split_search = search.split()
+    if len(split_search) == 1:
+        query = "SELECT productnaam FROM coop WHERE productnaam LIKE %s LIMIT 20"
+        cursor.execute(query, ("%" + str(split_search[0]) + "%",))
+    elif len(split_search) == 2:
+        query = "SELECT productnaam FROM coop WHERE productnaam LIKE %s AND productnaam LIKE %s LIMIT 20"
+        cursor.execute(query, ("%" + str(split_search[0]) + "%", "%" + str(split_search[1]) + "%",))
     results = [mv[0].lower() for mv in cursor.fetchall()]
+
+    print(split_search[0])
+
     splitter = []
+
+    substring = ""
     for item in results:
         split_item = item.split()
         for string in split_item:
-            if search in string:
-                splitter.append(string)
-    top5_search_results = list(set(splitter[:5]))
+            if split_search[0] in string:
+                substring = string
+                splitter.append(substring)
+            elif len(split_search) == 2:
+                if split_search[0] in substring and split_search[1] in string:
+                    substring += " " + string
+                    splitter.append(substring)
+
+    top5_search_results = list(set(splitter[:10]))
     return jsonify(matching_results=top5_search_results)
 
 
@@ -66,3 +95,5 @@ def poster():
 
 if __name__ == "__main__":
     app.run()
+
+
