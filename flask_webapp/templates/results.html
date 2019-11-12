@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block header %}
+<div class="inner">
+  <h3 class="masthead-brand">Resultaten</h3>
+  <nav class="nav nav-masthead justify-content-center">
+    <a class="nav-link active" href='{{ url_for("home") }}'>Home</a>
+    <a class="nav-link" href='{{ url_for("minor") }}'>S4D Minor</a>
+    <a class="nav-link" href='{{ url_for("poster") }}'>Poster</a>
+  </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+  <h1 class="cover-heading">Jouw supermarkt resultaten:</h1>
+  <p class="lead" id="lead"></p>
+<script>
+    var coop = {{ coop|tojson }};
+    var jumbo = {{ jumbo|tojson }};
+    var aldi = {{ aldi|tojson }};
+    var ah = {{ ah|tojson }};
+    document.getElementById("lead").innerHTML += coop + "<br>"
+    document.getElementById("lead").innerHTML += jumbo + "<br>";
+    document.getElementById("lead").innerHTML += aldi + "<br>";
+    document.getElementById("lead").innerHTML += ah + "<br>";
+</script>
+{% endblock %}
