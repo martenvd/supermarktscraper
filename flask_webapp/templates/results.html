@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block header %}
+<div class="inner">
+  <h3 class="masthead-brand">Resultaten</h3>
+  <nav class="nav nav-masthead justify-content-center">
+    <a class="nav-link active" href='{{ url_for("home") }}'>Home</a>
+    <a class="nav-link" href='{{ url_for("minor") }}'>S4D Minor</a>
+    <a class="nav-link" href='{{ url_for("poster") }}'>Poster</a>
+  </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+  <br><br><br>
+  <h1 class="cover-heading">Jouw supermarkt resultaten:</h1>
+  <p class="lead" id="lead"></p>
+  <div class="col-sm-12" align="center">
+    <div class="row" id="prices"></div>
+    <div id="chart"></div>
+  </div><br><br>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    //import ApexCharts from 'apexcharts'
+
+    var coop_names = {{ coop_names|tojson }};
+    var jumbo_names = {{ jumbo_names|tojson }};
+    var aldi_names = {{ aldi_names|tojson }};
+    var ah_names = {{ ah_names|tojson }};
+    var coop_price = {{ coop_price|tojson }};
+    var jumbo_price = {{ jumbo_price|tojson }};
+    var aldi_price = {{ aldi_price|tojson }};
+    var ah_price = {{ ah_price|tojson }};
+
+    document.getElementById("lead").innerHTML += "<b>COOP: </b>";
+    for (var i = 0; i < coop_names.length; i++) {
+      if (i < coop_names.length-1) {
+        document.getElementById("lead").innerHTML += coop_names[i] + "  |  ";
+      } else {
+        document.getElementById("lead").innerHTML += coop_names[i];
+        }
+    }
+    document.getElementById("lead").innerHTML += "<br><br>" + "<b>JUMBO: </b>";
+    for (var i = 0; i < jumbo_names.length; i++) {
+      if (i < jumbo_names.length-1) {
+        document.getElementById("lead").innerHTML += jumbo_names[i] + "  |  ";
+      } else {
+        document.getElementById("lead").innerHTML += jumbo_names[i];
+        }
+    }
+    document.getElementById("lead").innerHTML += "<br><br>" + "<b>ALDI: </b>";
+    for (var i = 0; i < aldi_names.length; i++) {
+      if (i < aldi_names.length-1) {
+        document.getElementById("lead").innerHTML += aldi_names[i] + "  |  ";
+      } else {
+        document.getElementById("lead").innerHTML += aldi_names[i];
+        }
+    }
+    document.getElementById("lead").innerHTML += "<br><br>" + "<b>ALBERT HEIJN: </b>";
+    for (var i = 0; i < ah_names.length; i++) {
+      if (i < ah_names.length-1) {
+        document.getElementById("lead").innerHTML += ah_names[i] + "  |  ";
+      } else {
+        document.getElementById("lead").innerHTML += ah_names[i];
+        }
+    }
+
+    var options = {
+      plotOptions: {
+        bar: {
+          distributed: true
+        }
+      },
+      chart: {
+        type: 'bar',
+      },
+      dataLabels: {
+        style: {
+          colors: ['#000000', '#000000', '#000000', '#ffffff'],
+          fontSize: '20px'
+        }
+      },
+      colors: ['#ffa500', '#ffff00', '#ffffff', '#0000ff'],
+      series: [{
+        name: 'Goedkoopste Supermarkt',
+        data: [coop_price,jumbo_price,aldi_price,ah_price]
+      }],
+      yaxis: {
+        opposite: true
+      },
+      xaxis: {
+        categories: ["Coop","Jumbo","Aldi","Albert Heijn"],
+        labels: {
+          style: {
+            colors: ['white', 'white', 'white', 'white'],
+            fontSize: '20px'
+          }
+        }
+      },
+      fill: {
+        opacity: 1
+      }
+    }
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+chart.render();
+
+</script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"> </script>
+{% endblock %}
