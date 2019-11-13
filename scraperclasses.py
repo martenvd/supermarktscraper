@@ -5,11 +5,6 @@ import mysql.connector as mariadb
 import time
 import re
 
-# TODO: alles hieronder
-# De Coop Scraper werkt niet naar behoren.
-# Naamgeving Albert_Heijn categorielijsten aanpassen naar de standaard.
-# Testen na de aanpassingen.
-
 ### Static Settings Class ###
 class Settings:
     database_user = "s4dpython"
@@ -87,9 +82,7 @@ class Jumbo_scraper(Scraper):
                          headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0"})
 
     def fetch_all_products(self):
-        all_products_reached = False
         all_pages_reached = False
-        product_index = 0
         page_index = 1
 
         while not all_pages_reached:
@@ -99,34 +92,38 @@ class Jumbo_scraper(Scraper):
             response = self.response(self.url + self.url_suffix + str(page_index))
             soup = self.soup(self.url + self.url_suffix + str(page_index))
             if len(response.text) > 2200:
-                while not all_products_reached:
-                    try:
-                        productnaam = soup.find_all("a", href=True)[product_index].text
-                        product_url = soup.find_all("a", href=True)[product_index]['href']
-                        prijs = soup.find_all("span", class_="jum-price-format")[product_index].text
-                        hoeveelheid = soup.find_all("span", class_="jum-pack-size")[product_index].text
-                        imagelink = re.findall("data-jum-hr-src=(.*?) ",
-                                               str(soup.find_all("figure")[product_index]))[0].replace('"', '')
+                producten = soup.find_all("a", href=True)
+                # quantity = soup.find_all("span", class_="jum-pack-size")
+                prices = []
+                for price in soup.find_all("span", class_="jum-price-format"):
+                    if len(price["class"]) != 1:
+                        pass
+                    else:
+                        prices.append(price)
 
-                        # TODO: wanneer de prijs per kilo/liter is iets verzinnen om te converten.
+                for product_index in range(len(producten)):
+                    try:
+                        productnaam = producten[product_index].text
+                        product_url = producten[product_index]['href']
+                        prijs = prices[product_index].text
+                        # TODO: Hoeveelheid kan niet bij elk producten worden opgehaald. Dit zorgt voor errors. Hoeveelheid is voor nu NULL.
+                        # hoeveelheid = quantity[product_index].text
+                        hoeveelheid = "NULL"
+                        imagelink = re.findall("data-jum-hr-src=(.*?) ", str(soup.find_all("figure")[product_index]))[0].replace('"', '')
                         try:
                             prijs = int(prijs) / 100
                         except:
-                            pass
-
+                            print("[-] Jumbo / Price conversion failed for {}".format(productnaam))
                         product = Product(self.table_name, productnaam, prijs, hoeveelheid, product_url, imagelink)
                         self.products.append(product)
                         self.database.write_product(product)
-
-                        product_index += 1
+                        print(productnaam, prijs)
                     except:
-                        all_products_reached = True
+                        print("[-] Jumbo / Product indexing failed for {}".format(producten[product_index]))
             else:
                 all_pages_reached = True
-                print("[*] Jumbo / Scraping stopped after {} pages".format(page_index))
-            product_index = 0
+                print("[*] Jumbo / Scraping finished after {} pages".format(page_index))
             page_index += 1
-            all_products_reached = False
 
 ### ALBERT HEIJN ###
 class AH_scraper(Scraper):
@@ -156,7 +153,6 @@ class AH_scraper(Scraper):
             print("[*] AH / Fetching all product information")
             for link in self.producten_url_list:
                 time.sleep(0.2)
-                print("[*] AH / Fetching {}".format(link))
                 try:
                     element = self.soup(link).find("script", type="application/ld+json").text
                     element = json.loads(element)
@@ -176,7 +172,6 @@ class AH_scraper(Scraper):
                     print("[-] AH / Product {} Failed".format(link))
         except:
             print("[*] AH / Stopped fetching all product information")
-            pass
 
 ### ALDI ###
 class Aldi_scraper(Scraper):
@@ -215,6 +210,7 @@ class Aldi_scraper(Scraper):
                     self.database.write_product(product)
             except:
                 pass
+        print("[*] Aldi / Finished fetching all products")
 
 
 ### COOP CLASS ####
@@ -249,4 +245,5 @@ class Coop_scraper(Scraper):
                     self.products.append(product)
                     self.database.write_product(product)
                 except:
-                    pass
+                    print("[-] Coop / Failed to index product {}".format(article))
+        print("[*] Coop / Finishing fetching all products")

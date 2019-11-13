@@ -9,13 +9,15 @@ albert_heijn = AH_scraper()
 supermarkets = [aldi, jumbo, coop, albert_heijn]
 
 def start_scraper_thread(supermarket):
-    print("Starting scraper thread for {}".format(supermarket))
+    print("[+] Starting scraper thread for {}".format(supermarket))
     supermarket.fetch_all_products()
-    print("Finished scraping for {}".format(supermarket))
+    print("[*] Finished scraping for {}".format(supermarket))
 
 if __name__ == "__main__":
-    threads = []
+    active_supermarkets = ""
+    for supermarket in supermarkets:
+        active_supermarkets += str(supermarket) + " "
+    print("[+] Preparing scrapers for: " + active_supermarkets)
     for supermarket in supermarkets:
         thread = threading.Thread(target=start_scraper_thread, args=(supermarket,))
-        threads.append(thread)
         thread.start()
