@@ -5,7 +5,7 @@ import mysql.connector as mariadb
 app = Flask(__name__)
 Session(app)
 
-mariadb_connection = mariadb.connect(host="213.190.22.172", user="s4dpython", password="s4dpython", database="producten")
+mariadb_connection = mariadb.connect(host="213.190.22.172", port=3307, user="s4dpython", password="s4dpython", database="producten")
 cursor = mariadb_connection.cursor()
 
 prices_global_list = []
@@ -34,9 +34,9 @@ def home():
                                        ("%" + split_item[0] + "%", "%" + split_item[1] + "%", ))
                 else:
                     query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
-                    productnaam LIKE %s AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
+                    AND productnaam LIKE %s AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
                     new_cursor.execute(query.format(table=key),
-                                       ("%" + split_item[0] + "%", "%" + split_item[1] + "%", "%" + split_item[2] + "%"))
+                                       ("%" + split_item[0] + "%", "%" + split_item[1] + "%", "%" + split_item[2] + "%",))
                 for object in new_cursor.fetchall():
                     pricelist[key].append(object[1])
                     namelist[key].append(object[0])
