@@ -16,6 +16,7 @@ def home():
         boodschappenlijst = request.form.getlist('boodschappenlijst')
 
         pricelist = {'coop': [], 'jumbo': [], 'aldi': [], 'albert_heijn': []}
+        namelist = {'coop': [], 'jumbo': [], 'aldi': [], 'albert_heijn': []}
 
         for item in boodschappenlijst:
             split_item = item.split()
@@ -23,44 +24,49 @@ def home():
             for key in pricelist.keys():
                 new_cursor = mariadb_connection.cursor()
                 if len(split_item) == 1:
-                    query = "SELECT productnaam FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
+                    query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
                     ORDER BY prijs ASC LIMIT 1"
                     new_cursor.execute(query.format(table=key), ("%" + split_item[0] + "%",))
                 elif len(split_item) == 2:
-                    query = "SELECT productnaam FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
+                    query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
                     AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
                     new_cursor.execute(query.format(table=key),
                                        ("%" + split_item[0] + "%", "%" + split_item[1] + "%", ))
                 else:
-                    query = "SELECT productnaam FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
+                    query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
                     productnaam LIKE %s AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
                     new_cursor.execute(query.format(table=key),
                                        ("%" + split_item[0] + "%", "%" + split_item[1] + "%", "%" + split_item[2] + "%"))
-                for prices in new_cursor.fetchall():
-                    pricelist[key].append(prices[0])
+                for object in new_cursor.fetchall():
+                    pricelist[key].append(object[1])
+                    namelist[key].append(object[0])
+
                 new_cursor.close()
 
-        print(pricelist)
-        global prices_global_list
-        prices_global_list_coop = pricelist['coop']
-        prices_global_list_jumbo = pricelist['jumbo']
-        prices_global_list_aldi = pricelist['aldi']
-        prices_global_list_ah = pricelist['albert_heijn']
-        session['prices_global_list_coop'] = prices_global_list_coop
-        session['prices_global_list_jumbo'] = prices_global_list_jumbo
-        session['prices_global_list_aldi'] = prices_global_list_aldi
-        session['prices_global_list_ah'] = prices_global_list_ah
+        #session['prices_list_coop'] = pricelist['coop']
+        #session['prices_list_jumbo'] = pricelist['jumbo']
+        #session['prices_list_aldi'] = pricelist['aldi']
+        #session['prices_list_ah'] = pricelist['albert_heijn']
+
+        session['names_list_coop'] = namelist['coop']
+        session['names_list_jumbo'] = namelist['jumbo']
+        session['names_list_aldi'] = namelist['aldi']
+        session['names_list_ah'] = namelist['albert_heijn']
+
+        total_prices = {'coop': 0, 'jumbo': 0, 'aldi': 0, 'albert_heijn': 0}
+
+        for key in pricelist.keys():
+            for price in pricelist[key]:
+                total_prices[key] += float(price)
+
+            total_prices[key] = "{:.2f}".format(total_prices[key])
+
+        session['total_prices_coop'] = total_prices['coop']
+        session['total_prices_jumbo'] = total_prices['jumbo']
+        session['total_prices_aldi'] = total_prices['aldi']
+        session['total_prices_ah'] = total_prices['albert_heijn']
+
         return redirect(url_for('results'))
-
-        #total_prices = {'coop': 0, 'jumbo': 0, 'aldi': 0, 'albert_heijn': 0}
-
-        #for key in pricelist.keys():
-            #for price in pricelist[key]:
-                #total_prices[key] += float(price)
-
-            #total_prices[key] = "{:.2f}".format(total_prices[key])
-
-        #print(total_prices)
     return render_template("index.html")
 
 
@@ -98,11 +104,17 @@ def autocomplete():
 
 @app.route("/results")
 def results():
-    coop = session.get('prices_global_list_coop', None)
-    jumbo = session.get('prices_global_list_jumbo', None)
-    aldi = session.get('prices_global_list_aldi', None)
-    ah = session.get('prices_global_list_ah', None)
-    return render_template("results.html", coop=coop, jumbo=jumbo, aldi=aldi, ah=ah)
+    coop_names = session.get('names_list_coop', None)
+    jumbo_names = session.get('names_list_jumbo', None)
+    aldi_names = session.get('names_list_aldi', None)
+    ah_names = session.get('names_list_ah', None)
+    coop_price = session.get('total_prices_coop', None)
+    jumbo_price = session.get('total_prices_jumbo', None)
+    aldi_price = session.get('total_prices_aldi', None)
+    ah_price = session.get('total_prices_ah', None)
+    return render_template("results.html", coop_names=coop_names, jumbo_names=jumbo_names, aldi_names=aldi_names,
+                           ah_names=ah_names, coop_price=coop_price, jumbo_price=jumbo_price, aldi_price=aldi_price,
+                           ah_price=ah_price)
 
 
 @app.route("/minor")
