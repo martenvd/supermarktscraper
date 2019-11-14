@@ -1,14 +1,13 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for, json
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_session import Session
 import mysql.connector as mariadb
 
 app = Flask(__name__)
 Session(app)
 
-mariadb_connection = mariadb.connect(host="213.190.22.172", port=3307, user="s4dpython", password="s4dpython", database="producten")
+mariadb_connection = mariadb.connect(host="213.190.22.172", port=3306, user="s4dpython", password="s4dpython", database="producten")
 cursor = mariadb_connection.cursor()
 
-prices_global_list = []
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
@@ -20,33 +19,26 @@ def home():
 
         for item in boodschappenlijst:
             split_item = item.split()
-            print(split_item)
             for key in pricelist.keys():
+                like_list = []
+                extra_param = ""
                 new_cursor = mariadb_connection.cursor()
-                if len(split_item) == 1:
-                    query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
-                    ORDER BY prijs ASC LIMIT 1"
-                    new_cursor.execute(query.format(table=key), ("%" + split_item[0] + "%",))
-                elif len(split_item) == 2:
-                    query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
-                    AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
-                    new_cursor.execute(query.format(table=key),
-                                       ("%" + split_item[0] + "%", "%" + split_item[1] + "%", ))
-                else:
-                    query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s AND NOT prijs = 0.0 \
-                    AND productnaam LIKE %s AND productnaam LIKE %s ORDER BY prijs ASC LIMIT 1"
-                    new_cursor.execute(query.format(table=key),
-                                       ("%" + split_item[0] + "%", "%" + split_item[1] + "%", "%" + split_item[2] + "%",))
+                for i in range(len(split_item)):
+                    if i > 0:
+                        extra_param += " AND productnaam LIKE %s"
+                    else:
+                        extra_param = ""
+                    like_list.append("%" + split_item[i] + "%")
+
+                query = "SELECT productnaam, prijs FROM {table} WHERE productnaam LIKE %s" + extra_param + " AND NOT prijs = 0.0 \
+                                        ORDER BY prijs ASC LIMIT 1"
+
+                new_cursor.execute(query.format(table=key), like_list)
+
                 for object in new_cursor.fetchall():
                     pricelist[key].append(object[1])
                     namelist[key].append(object[0])
-
                 new_cursor.close()
-
-        #session['prices_list_coop'] = pricelist['coop']
-        #session['prices_list_jumbo'] = pricelist['jumbo']
-        #session['prices_list_aldi'] = pricelist['aldi']
-        #session['prices_list_ah'] = pricelist['albert_heijn']
 
         session['names_list_coop'] = namelist['coop']
         session['names_list_jumbo'] = namelist['jumbo']
@@ -74,32 +66,42 @@ def home():
 def autocomplete():
     search = request.args.get('q').lower()
     split_search = search.split()
-    if len(split_search) == 1:
-        query = "SELECT productnaam FROM jumbo WHERE productnaam LIKE %s LIMIT 20"
-        cursor.execute(query, ("%" + str(split_search[0]) + "%",))
-    elif len(split_search) == 2:
-        query = "SELECT productnaam FROM jumbo WHERE productnaam LIKE %s AND productnaam LIKE %s LIMIT 20"
-        cursor.execute(query, ("%" + str(split_search[0]) + "%", "%" + str(split_search[1]) + "%",))
-    results = [mv[0].lower() for mv in cursor.fetchall()]
+    like_list = []
+    extra_param = ""
+    for i in range(len(split_search)):
+        if i > 0:
+            extra_param += " AND productnaam LIKE %s"
+        else:
+            extra_param = ""
+        like_list.append("%" + split_search[i] + "%")
 
-    print(split_search[0])
+    query = "SELECT productnaam FROM jumbo WHERE productnaam LIKE %s" + extra_param + " LIMIT 20"
+
+    cursor.execute(query, like_list)
+
+    results = [mv[0].lower() for mv in cursor.fetchall()]
 
     splitter = []
 
-    substring = ""
+    full_string = ""
     for item in results:
         split_item = item.split()
         for string in split_item:
             if split_search[0] in string:
-                substring = string
-                splitter.append(substring)
+                    full_string = string
+                    splitter.append(string)
             elif len(split_search) == 2:
-                if split_search[0] in substring and split_search[1] in string:
-                    substring += " " + string
-                    splitter.append(substring)
+                if split_search[0] in full_string and split_search[1] in string:
+                    full_string += " " + string
+                    splitter.append(full_string)
+            else:
+                full_string += " " + string
+                splitter.append(full_string)
 
-    top5_search_results = list(set(splitter[:10]))
-    return jsonify(matching_results=top5_search_results)
+
+    top10_search_results = list(set(splitter[:10]))
+    print(splitter)
+    return jsonify(matching_results=top10_search_results)
 
 
 @app.route("/results")

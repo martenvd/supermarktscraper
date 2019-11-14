@@ -3,8 +3,26 @@
   <component name="ChangeListManager">
     <list default="true" id="7c30778c-894c-4537-a6bb-e6bbfac557b4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/s4d_python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/s4d_python.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scraperclasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/scraperclasses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/archive/ah-test-scraper2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/archive/aldi-test-scraper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/archive/jumbo-test-scraper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/archive/scraperclasses_old.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/ah-test-scraper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/aldi-test-scraper2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/coop-scraper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/jumbo-test-scraper2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/database/50-server.cnf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/database/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/database/mysql.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/database/run" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/firewall/iptables_rules.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/frontend/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/frontend/flasktest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/frontend/run" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/frontend/templates/hello_world.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flask_webapp/flask-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/flask_webapp/flask-test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,6 +46,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -41,7 +60,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.scraperclasses">
+  <component name="RunManager" selected="Python.flask-test">
     <configuration name="flask-test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="s4d_python" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -149,9 +168,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.flask-test" />
         <item itemvalue="Python.scraperclasses" />
         <item itemvalue="Python.interface-test" />
-        <item itemvalue="Python.flask-test" />
         <item itemvalue="Python.jumbo-test-scraper2" />
         <item itemvalue="Python.jumbo-test-scraper" />
       </list>
