@@ -5,6 +5,8 @@ import mysql.connector as mariadb
 import time
 import re
 
+# TODO: Input validatie bij de gescrapte producten.
+
 ### Static Settings Class ###
 class Settings:
     database_user = "s4dpython"
@@ -38,12 +40,10 @@ class Database:
     def __repr__(self):
         return "Database Class for: {}".format(self.supermarket)
 
-    # TODO: advies vragen over de product.supermarket vs self.supermarket.
-    #  Welke optie is beter? laten afhangen van het product of van de Class instance?
     def write_product(self, product):
         try:
             self.cursor.execute("INSERT INTO {} (productnaam, prijs, product_url, hoeveelheid, imagelink) "
-                                "VALUES (%s, %s, %s, %s, %s)".format(product.supermarket),
+                                "VALUES (%s, %s, %s, %s, %s)".format(self.supermarket),
                                 (product.name, product.price, product.url, product.quantity, product.image))
             self.mariadb_connection.commit()
         except mariadb.Error as error:
