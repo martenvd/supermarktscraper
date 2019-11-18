@@ -15,19 +15,18 @@ if len(sys.argv) < 2:
 else:
     for argument in sys.argv:
         supermarkets.append(argument)
-del supermarkets[0]
-
-for index in range(len(supermarkets)):
-    if supermarkets[index] == "aldi":
-        supermarkets[index] = aldi
-    elif supermarkets[index] == "jumbo":
-        supermarkets[index] = jumbo
-    elif supermarkets[index] == "albert_heijn":
-        supermarkets[index] = albert_heijn
-    elif supermarkets[index] == "coop":
-        supermarkets[index] = coop
-    else:
-        print("[-] Invalid supermarket in arguments: {}".format(supermarkets[index]))
+    del supermarkets[0]
+    for index in range(len(supermarkets)):
+        if supermarkets[index] == "aldi":
+            supermarkets[index] = aldi
+        elif supermarkets[index] == "jumbo":
+            supermarkets[index] = jumbo
+        elif supermarkets[index] == "albert_heijn":
+            supermarkets[index] = albert_heijn
+        elif supermarkets[index] == "coop":
+            supermarkets[index] = coop
+        else:
+            print("[-] Invalid supermarket in arguments: {}".format(supermarkets[index]))
 
 def start_scraper_thread(supermarket):
     print("[+] Starting scraper thread for {}".format(supermarket))
