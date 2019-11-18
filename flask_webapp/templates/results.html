@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block header %}
+<style>
+  /* Dropdown Button */
+.dropbtn {
+  padding: 16px;
+  font-size: 22px;
+  border: none;
+  width: 150px;
+}
+
+#coopbutton {
+  background-color: orange;
+  color: black;
+}
+
+#jumbobutton {
+  background-color: yellow;
+  color: black;
+}
+
+#aldibutton {
+  background-color: white;
+  color: black;
+}
+
+#ahbutton {
+  background-color: blue;
+  color: white;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 400px;
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content p {
+  color: black;
+  padding: 5px 5px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content p:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background-color: white;}
+</style>
+<div class="inner">
+  <h3 class="masthead-brand">Resultaten</h3>
+  <nav class="nav nav-masthead justify-content-center">
+    <a class="nav-link active" href='{{ url_for("home") }}'>Home</a>
+    <a class="nav-link" href='{{ url_for("minor") }}'>S4D Minor</a>
+    <a class="nav-link" href='{{ url_for("poster") }}'>Poster</a>
+  </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+  <br>
+  <h1 class="cover-heading">Jouw supermarkt resultaten:</h1>
+  <p class="lead" id="lead"></p>
+  <br><br>
+  <div class="col-sm-12" align="center">
+    <div class="row" id="products">
+      <div class="col-sm-6">
+        <div class="dropdown">
+          <button class="dropbtn" id="coopbutton">Coop</button>
+          <div class="dropdown-content" id="coop"></div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="dropdown">
+          <button class="dropbtn" id="jumbobutton">Jumbo</button>
+          <div class="dropdown-content" id="jumbo"></div>
+        </div>
+      </div>
+      <br><br><br><br>
+      <div class="col-sm-6">
+        <div class="dropdown">
+          <button class="dropbtn" id="aldibutton">Aldi</button>
+          <div class="dropdown-content" id="aldi"></div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="dropdown">
+          <button class="dropbtn" id="ahbutton">Albert Heijn</button>
+          <div class="dropdown-content" id="ah"></div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div id="chart"></div>
+  </div><br><br>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+
+    var coop_names = {{ coop_names|tojson }};
+    var jumbo_names = {{ jumbo_names|tojson }};
+    var aldi_names = {{ aldi_names|tojson }};
+    var ah_names = {{ ah_names|tojson }};
+    var coop_price = {{ coop_price|tojson }};
+    var jumbo_price = {{ jumbo_price|tojson }};
+    var aldi_price = {{ aldi_price|tojson }};
+    var ah_price = {{ ah_price|tojson }};
+
+    for (var i = 0; i < coop_names.length; i++) {
+      document.getElementById("coop").innerHTML += '<p>' + coop_names[i] + '</p>';
+    }
+
+
+    for (var i = 0; i < jumbo_names.length; i++) {
+      document.getElementById("jumbo").innerHTML += '<p>' + jumbo_names[i] + '</p>';
+    }
+
+    for (var i = 0; i < aldi_names.length; i++) {
+      document.getElementById("aldi").innerHTML += '<p>' + aldi_names[i] + '</p>';
+    }
+
+    for (var i = 0; i < ah_names.length; i++) {
+      document.getElementById("ah").innerHTML += '<p>' + ah_names[i] + '</p>';
+    }
+
+    var options = {
+      plotOptions: {
+        bar: {
+          distributed: true,
+          dataLabels: {
+            position: 'center'
+          }
+        }
+      },
+      grid: {
+        show: false
+      },
+      chart: {
+        type: 'bar',
+        toolbar: {
+          show: false
+        }
+      },
+      dataLabels: {
+        style: {
+          colors: ['#000000', '#000000', '#000000', '#ffffff'],
+          fontSize: '20px'
+        },
+        enabled: true,
+        formatter: function(val) {
+          return "€" + val;
+        }
+      },
+      colors: ['#ffa500', '#ffff00', '#ffffff', '#0000ff'],
+      series: [{
+        name: 'Goedkoopste Supermarkt',
+        data: [coop_price,jumbo_price,aldi_price,ah_price]
+      }],
+      yaxis: {
+        opposite: true,
+        labels: {
+          show: false,
+          formatter: function (val) {
+            return "€" + val;
+          }
+        }
+      },
+      xaxis: {
+        categories: ["Coop","Jumbo","Aldi","Albert Heijn"],
+        labels: {
+          style: {
+            colors: ['white', 'white', 'white', 'white'],
+            fontSize: '20px'
+          }
+        },
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        crosshairs: {
+          show: false
+        }
+      },
+      fill: {
+        opacity: 1
+      }
+    }
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+chart.render();
+
+</script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"> </script>
+{% endblock %}

@@ -11,6 +11,7 @@ CREATE TABLE aldi (
 	productnaam VARCHAR(255) NOT NULL,
 	prijs FLOAT(6,2) NOT NULL,
 	product_url VARCHAR(1023),
+	hoeveelheid VARCHAR(255),
 	imagelink VARCHAR(1023)
 );
 CREATE TABLE jumbo (
