@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eb3051a1-a8d3-4116-930f-90a04a382bb1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/s4d_python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/s4d_python.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker_images/bash_scripts/scraper_script.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker_images/bash_scripts/validate_database.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flask_webapp/templates/poster.html" beforeDir="false" afterPath="$PROJECT_DIR$/flask_webapp/templates/poster.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_images/firewall/iptables_rules.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker_images/bash_scripts/iptables_rules.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,10 +18,12 @@
   </component>
   <component name="ProjectId" id="1Tpf43TSe6DA0TKaZfUaqICW6Sa" />
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Bas\Desktop\Python_Project_S4D\s4d_python\docker_images\bash_scripts" />
       <recent name="C:\Users\Bas\Desktop\Python_Project_S4D\s4d_python\flask_webapp\static" />
       <recent name="C:\Users\Bas\Desktop\Python_Project_S4D\s4d_python\flask_webapp" />
       <recent name="C:\Users\Bas\Desktop\Python_Project_S4D\s4d_python\flask_webapp\templates" />
