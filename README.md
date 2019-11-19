@@ -8,8 +8,8 @@ Het bouwen van de docker images doe je met:
 `sudo docker build -t <naam image> .` in de map van de database docker image (docker_images/database/) of de frontend docker image (docker_images/frontend/).
 
 Het draaien van de docker containers doe je met:
-`sudo docker run -d -p 3306:3306 <naam database image>` voor het runnen van de database container, en `sudo docker run -d -p 5000:5000 <naam frontend image>` voor het runnen van de frontend container.
+`sudo docker run -d -p 3306:3306 <naam database image>` voor het runnen van de database container, en `sudo docker run -d -p 80:80 <naam frontend image>` voor het runnen van de frontend container.
 
 Mocht je handmatig flask willen starten buiten docker om, dan kun je dit doen door eerst het commando `export FLASK_APP=/root/flask-test.py` te draaien en daarna het commando `python3 -m flask run --host=0.0.0.0` te draaien. Op deze manier wordt de server lokaal gestart en is die beschikbaar voor het internet (mocht je dat niet willen haal je de `--host` tag weg.
 
-De database is te vullen door de scraper te starten (main.py). Wanneer de database gevuld is en de flask server draait kun je deze benaderen door naar `127.0.0.1:5000` te gaan.
+De database is te vullen door de scraper te starten (main.py). Wanneer de database gevuld is en de flask server draait kun je deze benaderen door naar `127.0.0.1:80` te gaan.
