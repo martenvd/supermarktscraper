@@ -9,8 +9,8 @@ RUN \
 
 COPY run /root/run
 COPY templates /root/templates
-COPY flask-test.py /root/flask-test.py
+COPY flask-production.py /root/flask-production.py
 COPY static /root/static
 
-EXPOSE 5000
+EXPOSE 80
 CMD bash /root/run
