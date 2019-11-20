@@ -12,6 +12,6 @@ Het draaien van de docker containers doe je met:
 
 Mocht je handmatig flask willen starten buiten docker om voor testdoeleinden, dan kun je dit doen door eerst het commando `export FLASK_APP=/root/flask-production.py` te draaien en daarna het commando `python3 -m flask run --host=0.0.0.0` te draaien. Op deze manier wordt de server lokaal gestart en is die beschikbaar voor het internet (mocht je dat niet willen haal je de `--host` tag weg.
 
-Mocht je flask handmatig willen starten als productieomgeving, doe dit dan d.m.v. een productieserver als bijvoorbeeld `gunicorn`. Deze installeer je met `pip3 install gunicorn`. Vervolgens kun je de productieomgeving starten middels het commando `gunicorn --bind=0.0.0.0:80 flask-production:app`
+Mocht je flask handmatig willen starten als productieomgeving, doe dit dan d.m.v. een productieserver zoals bijvoorbeeld `gunicorn`. Deze installeer je met `pip3 install gunicorn`. Vervolgens kun je de productieomgeving starten middels het commando `gunicorn --bind=0.0.0.0:80 flask-production:app`
 
 De database is te vullen door de scraper te starten (main.py). Wanneer de database gevuld is en de flask server draait kun je deze benaderen door naar `127.0.0.1:80` te gaan.
