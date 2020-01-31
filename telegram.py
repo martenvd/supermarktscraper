@@ -61,4 +61,3 @@ updater.dispatcher.add_handler(CommandHandler('boodschappen', groceries))
 
 updater.start_polling()
 updater.idle()
-
