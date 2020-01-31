@@ -1,6 +1,6 @@
 from telegram.ext import Updater, CommandHandler
 import mysql.connector as mariadb
-mariadb_connection = mariadb.connect(host="213.190.22.172", user="s4dpython", password="s4dpython", database="producten")
+mariadb_connection = mariadb.connect(host="192.168.192.2", user="s4dpython", password="s4dpython", database="producten")
 cursor = mariadb_connection.cursor()
 
 def groceries(update, context):
@@ -56,7 +56,7 @@ def groceries(update, context):
     update.message.reply_text("De goedkoopste winkel is {0}".format(cheapest_name))
     update.message.reply_text("\n".join(itemlist[cheapest_name]))
 
-updater = Updater('921491906:AAEhyFdAiSBNotjo93E-tW1TqtmfYXc7giY', use_context=True)
+updater = Updater('*************************', use_context=True)
 updater.dispatcher.add_handler(CommandHandler('boodschappen', groceries))
 
 updater.start_polling()
